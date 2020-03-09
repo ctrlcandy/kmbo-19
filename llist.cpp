@@ -1,8 +1,8 @@
-#include "llist.h"
+#include <llist.h>
 
 LList::LList() {
 	this->_size = 0;
-	this->head = nullptr;
+	this->_head = nullptr;
 }
 
 LList::~LList() {
@@ -10,11 +10,24 @@ LList::~LList() {
 		pop_front();
 }
 
+int& LList::data(size_t idx) const {
+	Node* temp = _head;
+	size_t count = 0;
+
+	for (size_t i = 0; i < idx; i++)
+	{
+		if (temp != nullptr) {
+			temp = temp->next;
+		}
+	}
+	return temp->data;
+}
+
 void LList::push_back(int val) {
-	if (head == nullptr) 
-		head = new Node(val);
+	if (_head == nullptr) 
+		_head = new Node(val);
 	else {
-		Node* temp = head;
+		Node* temp = _head;
 		while (temp->next != nullptr)
 			temp = temp->next;
 
@@ -24,7 +37,7 @@ void LList::push_back(int val) {
 }
 
 void LList::push_front(int val) {
-	head = new Node(val, head);
+	_head = new Node(val, _head);
 	_size++;
 }
 
@@ -33,11 +46,11 @@ void LList::pop_back() {
 }
 
 void LList::pop_front() {
-	if (head == nullptr)
+	if (_head == nullptr)
 		return;
 
-	Node* temp = head;
-	head = head->next;
+	Node* temp = _head;
+	_head = _head->next;
 	delete temp;
 	_size--;
 }
@@ -47,26 +60,16 @@ size_t LList::size() const{
 }
 
 int LList::operator[](size_t idx) const {
-	Node* temp = head;
-	size_t count = 0;
-
-	while (temp != nullptr) {
-		if (count == idx)
-			return temp->data;
-
-		temp = temp->next;
-		count++;
-	}
+	return data(idx);
 }
 
 int& LList::operator[](size_t idx) {
-	//...
+	return data(idx);
 }
-
 
 void LList::erase_at(size_t idx) {
 	if (idx != 0) {
-		Node* temp = head;
+		Node* temp = _head;
 		for (size_t i = 0; i < idx - 1; i++)
 			temp = temp->next;
 
@@ -81,7 +84,7 @@ void LList::erase_at(size_t idx) {
 
 void LList::insert_at(size_t idx, int val) {
 	if (idx != 0) {
-		Node* temp = head;
+		Node* temp = _head;
 		for (size_t i = 0; i < idx - 1; i++)
 			temp = temp->next;
 
@@ -95,5 +98,15 @@ void LList::insert_at(size_t idx, int val) {
 }
 
 void LList::reverse() {
+	Node* prev = nullptr;
+	Node* next = nullptr;
+	Node* curr = _head;
 
+	while (curr != nullptr) {
+		next = curr->next;
+		curr->next = prev;
+		prev = curr;
+		curr = next;
+	}
+	_head = prev;
 }
